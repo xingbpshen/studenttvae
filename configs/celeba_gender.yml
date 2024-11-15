@@ -1,0 +1,37 @@
+data:
+  dataset: "CelebAGender"
+  image_size: 64
+  channels: 3
+  data_dir: "/usr/local/faststorage/datasets/CelebA/"
+  train_ratio: 0.5
+  val_ratio: 0.1
+  test_ratio: 0.4
+  female_ratio: 0.95
+  male_ratio: 0.05
+
+model:
+  type: "resnet"
+  in_channels: 3
+  out_channels: 3
+  latent_dim: 256
+
+training:
+  batch_size: 100
+  n_epochs: 1000
+  validation_freq: 10
+  patience: 10
+
+optim:
+  weight_decay: 0.000
+  optimizer: "Adam"
+  lr: 0.0001
+  beta1: 0.9
+  amsgrad: false
+  eps: 0.00000001
+  grad_clip: 1.0
+
+validation:
+  batch_size: 100
+
+testing:
+  batch_size: 100
