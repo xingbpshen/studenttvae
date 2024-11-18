@@ -9,7 +9,7 @@ import numpy as np
 from runners.run_vae import VAERunner
 
 
-# Code adapted from DDIM by Song et al.
+# Code from DDIM by Song et al. (https://github.com/ermongroup/ddim)
 def dict2namespace(config):
     namespace = argparse.Namespace()
     for key, value in config.items():
@@ -21,7 +21,7 @@ def dict2namespace(config):
     return namespace
 
 
-# Code adapted from DDIM by Song et al.
+# Code adapted from DDIM by Song et al. (https://github.com/ermongroup/ddim)
 def parse_args_and_config():
     parser = argparse.ArgumentParser(description=globals()["__doc__"])
 
@@ -50,6 +50,7 @@ def parse_args_and_config():
     )
     parser.add_argument("--train", action="store_true", help="Whether to train the model")
     parser.add_argument("--test", action="store_true", help="Whether to test the model")
+    parser.add_argument("--d_shift", action="store_true", help="Whether to test on the shifted data")
     parser.add_argument("--sample", action="store_true", help="Whether to sample from the model")
     parser.add_argument(
         "--comet", action="store_true", help="Whether to use comet.ml"
@@ -76,7 +77,7 @@ def parse_args_and_config():
     return args, new_config
 
 
-# Code adapted from DDIM by Song et al.
+# Code adapted from DDIM by Song et al. (https://github.com/ermongroup/ddim)
 def main():
     args, config = parse_args_and_config()
 
@@ -99,7 +100,7 @@ def main():
                 os.makedirs(runner.log_path)
                 runner.train()
         elif args.test:
-            runner.test()
+            runner.test(d_shift=args.d_shift)
         elif args.sample:
             runner.sample()
         else:

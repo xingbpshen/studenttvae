@@ -45,7 +45,7 @@ class VAERunner:
             experiment.log_parameters(self.config)
             experiment.log_parameters(self.args)
         # Get datasets
-        if self.config.data.dataset == "CelebAGender":
+        if self.config.data.dataset in ["CelebAGender", "BIMCV"]:
             train_dataset, val_dataset, _, _ = get_dataset(self.args, self.config)
         elif self.config.data.dataset == "Statlog":
             train_dataset, val_dataset, _ = get_dataset(self.args, self.config)
@@ -137,7 +137,7 @@ class VAERunner:
                         patient_cnt += 1
                 model.train()
 
-    def test(self):
+    def test(self, d_shift):
         # Get model
         model = VAE(self.config, self.args.vae).to(self.device)
         model = load_latest_model(model, self.log_path)
@@ -145,9 +145,14 @@ class VAERunner:
         model.eval()
 
         # Get datasets
-        if self.config.data.dataset == "CelebAGender":
-            _, _, test_dataset, _ = get_dataset(self.args, self.config)
+        if self.config.data.dataset in ["CelebAGender", "BIMCV"]:
+            if d_shift:
+                _, _, _, test_dataset = get_dataset(self.args, self.config)
+            else:
+                _, _, test_dataset, _ = get_dataset(self.args, self.config)
         elif self.config.data.dataset == "Statlog":
+            if d_shift:
+                raise ValueError("Statlog does not have shifted data")
             _, _, test_dataset = get_dataset(self.args, self.config)
         else:
             raise ValueError("Unknown dataset in test()")
@@ -156,7 +161,21 @@ class VAERunner:
         mean_log_px = importance_sample_log_likelihood(
             model, test_dataset, K=100, batch_size=self.config.testing.batch_size, device=self.device)
         print(f"Mean log likelihood estimate: {mean_log_px}")
-
+        # Evaluate testset loss
+        test_loader = torch.utils.data.DataLoader(
+            test_dataset,
+            batch_size=self.config.testing.batch_size,
+            shuffle=False,
+            drop_last=False
+        )
+        total_test_loss = 0
+        with torch.no_grad():
+            for i, (x, _) in enumerate(test_loader):
+                x = x.to(self.device)
+                loss = calculate_loss(model, x)
+                total_test_loss += loss.item()
+        total_test_loss /= len(test_dataset)
+        print(f"Test nelbo: {total_test_loss}")
 
     def sample(self):
         raise NotImplementedError("Sampling not implemented yet")
