@@ -37,9 +37,9 @@ class VAERunner:
                 name=self.args.doc, tags=["train", self.config.data.dataset, self.args.vae]
             )
             experiment = comet_ml.start(
-                api_key="aasDnylcCZ5NtS4ZbcR1xsZa7",
-                project_name="ecse-626-final-project",
-                workspace="xingshen",
+                api_key=os.environ["COMET_API_KEY"],
+                project_name="scalability-student-t-vae",
+                workspace=os.environ["COMET_WORKSPACE"],
                 experiment_config=experiment_config
             )
             experiment.log_parameters(self.config)
