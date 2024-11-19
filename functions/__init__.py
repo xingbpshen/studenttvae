@@ -3,7 +3,7 @@ import torch
 import torch.special as sp
 
 
-# Code adapted from DDIM by Song et al.
+# Code adapted from DDIM by Song et al. (https://github.com/ermongroup/ddim)
 def get_optimizer(config, parameters):
     if config.optim.optimizer == 'SGD':
         return optim.SGD(parameters, lr=config.optim.lr, momentum=0.9)
@@ -17,7 +17,7 @@ def get_optimizer(config, parameters):
         raise NotImplementedError(f"Invalid optimizer {config.optim.optimizer}.")
 
 
-def student_t_log_likelihood(x, mu, log_lamb, log_v):
+def student_t_log_likelihood(x, mu, log_lamb, log_v):   # lamb = 1 / scale^2
     lamb = log_lamb.exp()
     v = log_v.exp()
     dim = tuple(range(1, len(x.shape)))

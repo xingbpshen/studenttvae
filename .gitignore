@@ -2,3 +2,6 @@ log/
 data/
 .DS_Store
 .idea/
+plot.ipynb
+figs/
+__pycache__/

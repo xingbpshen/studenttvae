@@ -77,7 +77,7 @@ def get_dataset(args, config):
         # Path to BIMCV dataset
         bimcv_path = config.data.data_dir
 
-        # Gather all Normal and Tuberculosis images
+        # Gather all Normal and COVID-19 images
         all_normals = pd.DataFrame(
             {'path': [os.path.join(bimcv_path, 'Normal', f) for f in os.listdir(os.path.join(bimcv_path, 'Normal'))],
              'label': 0})
@@ -85,12 +85,12 @@ def get_dataset(args, config):
                                                    os.listdir(os.path.join(bimcv_path, 'COVID19'))], 'label': 1})
         num_normals = len(all_normals)
 
-        # Calculate the number of Tuberculosis needed
+        # Calculate the number of COVID-19 needed
         num_covid19s_needed = int(num_normals * (config.data.covid19_ratio / config.data.normal_ratio))
         selected_covid19s = all_covid19s.sample(n=num_covid19s_needed, random_state=42)
         remaining_covid19s = all_covid19s.drop(selected_covid19s.index)
 
-        # Combine selected Normal and Tuberculosis data
+        # Combine selected Normal and COVID-19 data
         combined_data = pd.concat([all_normals, selected_covid19s])
 
         # Define split ratios
@@ -103,7 +103,7 @@ def get_dataset(args, config):
         val_data, test_data_A = train_test_split(test_val_data, train_size=val_ratio / (val_ratio + test_ratio),
                                                  random_state=42)
 
-        # Create test_dataset_B by sampling from remaining Tuberculosis
+        # Create test_dataset_B by sampling from remaining COVID-19
         test_data_B = remaining_covid19s.sample(n=len(test_data_A), random_state=42)
 
         # Shuffle the final splits
