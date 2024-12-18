@@ -1,4 +1,6 @@
-# Scalability of Student-t VAEs for Robust Density Estimation
+<h1 align="center">
+Scalability of Student-t VAEs for Robust Density Estimation
+</h1>
 
 This repository contains the code for the report "On Scalability of Student-t Variational Autoencoders for Robust Density Estimation: A Case Study on Images" by X. Shen. This report is a part of the course project for the ECSE 626 Statistical Computer Vision at McGill University.
 
